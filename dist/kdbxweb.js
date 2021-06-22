@@ -1,4 +1,4 @@
-/*! kdbxweb v1.14.4, (c) 2021 Antelle, opensource.org/licenses/MIT */
+/*! kdbxweb v1.15.0, (c) 2021 Antelle, opensource.org/licenses/MIT */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("crypto"), require("xmldom"));
@@ -4553,7 +4553,8 @@ KdbxMeta.prototype.merge = function (remote, objectMap) {
     if (remote.keyChanged > this.keyChanged) {
         this.keyChanged = remote.keyChanged;
     }
-    if (remote.settingsChanged > this.settingsChanged) {
+    const otherIsNewer = remote.settingsChanged > this.settingsChanged;
+    if (otherIsNewer) {
         this.settingsChanged = remote.settingsChanged;
     }
     if (remote.recycleBinChanged > this.recycleBinChanged) {
@@ -4566,7 +4567,7 @@ KdbxMeta.prototype.merge = function (remote, objectMap) {
         this.entryTemplatesGroupChanged = remote.entryTemplatesGroupChanged;
     }
     Object.keys(remote.customData).forEach(function (key) {
-        if (!this.customData[key] && !objectMap.deleted[key]) {
+        if ((otherIsNewer || !this.customData[key]) && !objectMap.deleted[key]) {
             this.customData[key] = remote.customData[key];
         }
     }, this);
